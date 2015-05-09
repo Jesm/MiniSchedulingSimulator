@@ -1,0 +1,25 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+body{
+	font: 16px/1.3 Verdana, sans-serif; 
+	background: #333;
+	color: #FFF;
+}
+
+main{
+	margin: auto;
+	width: 1000px;
+	overflow: hidden;
+}
+
+h1{
+	margin: 15px auto;
+}
+
+.column{
+	width:50%;
+	float: left;
+}
