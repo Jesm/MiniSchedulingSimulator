@@ -23,3 +23,17 @@ h1{
 	width:50%;
 	float: left;
 }
+
+.block1{
+	margin-top:10px;
+	height: 200px;
+	padding: 10px;
+	background: #aaa;
+}
+
+.block2{
+	margin-top:10px;
+	height: 410px;
+	padding: 10px;
+	background: #aaa;
+}
