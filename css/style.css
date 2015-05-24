@@ -17,6 +17,7 @@ main{
 
 h1{
 	margin: 15px auto;
+	cursor: default;
 }
 
 .column{
@@ -24,16 +25,39 @@ h1{
 	float: left;
 }
 
-.block1{
-	margin-top:10px;
-	height: 200px;
+.block1, .block2{
+	margin:10px 5px;
+	height: 160px;
 	padding: 10px;
 	background: #aaa;
+	color: #FFF;
+	border-style: solid;
+	border-width: 2px;
 }
 
 .block2{
-	margin-top:10px;
-	height: 410px;
-	padding: 10px;
-	background: #aaa;
+	height: 354px;
+}
+
+#task_generator{
+	background: #009B58;
+	border-color: #21BC79;
+	border-top-left-radius: 5px;
+}
+
+#task_queue{
+	background: #176DEE;
+	border-color: #388EFF;
+}
+
+#cpu{
+	background: #D7432D;
+	border-color: #F8644E;
+	border-top-right-radius: 5px;
+}
+
+#io_queue{
+	background: #FFB600;
+	border-color: #FFD721;
+	border-bottom-right-radius: 5px;
 }

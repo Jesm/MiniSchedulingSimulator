@@ -129,11 +129,11 @@ var App={
 	},
 
 	execute:function(){
-		console.log('Executando....');
-
 		this.JobGenerator.execute();
 		this.Cpu.execute();
 		this.WaitingJobQueue.execute();
+
+		React.render(this.component, document.body);
 
 		if(this.changedIntervalDuration){
 			this.changedIntervalDuration=false;
@@ -144,7 +144,6 @@ var App={
 
 	init:function(){
 		this.component=React.createElement(AppComponent, this);
-		React.render(this.component, document.body);
 
 		this.startExecutionInterval();
 	}
