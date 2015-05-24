@@ -75,12 +75,15 @@ var TaskList=React.createClass({
 
 	render:function(){
 		var list=[];
-		for(var tasks=this.props.tasks, x=0;x<tasks.length;x++)
+		for(var tasks=this.props.tasks, x=0;x<tasks.length;x++){
+			var job=tasks[x];
+
 			list.push(React.createElement('li', {
 				style:{
-					background:'rgb('+tasks[x].bg.join(',')+')'
+					background:'rgb('+job.bg.join(',')+')'
 				}
-			}));
+			}, '#'+job.id));
+		}
 
 		return React.createElement('ul', {className:'task_list'}, list);
 	}

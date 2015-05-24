@@ -68,8 +68,12 @@ h1{
 }
 .task_list li{
 	margin: 5px;
-	width: 10px;
-	height: 10px;
+	width: 36px;
+	padding: 9px 0;
+	height: 18px;
+	line-height: 18px;
 	float: left;
-	border-radius: 5px;
+	border-radius: 36px;
+	text-align: center;
+	font-size: 10px;
 }

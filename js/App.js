@@ -12,6 +12,7 @@ var App={
 
 	JobGenerator:{
 
+		numberOfCreatedJobs:0,
 		lastJobCreatedTime:+new Date(),
 		probabilityIOBound:.33, // Multiply by 100 to get the percentage
 
@@ -27,7 +28,8 @@ var App={
 			var job={
 				progress:0,
 				gotIOInteration:false,
-				bg:[]
+				bg:[],
+				id:(++this.numberOfCreatedJobs)
 			};
 
 			for(var len=3;len--;)
