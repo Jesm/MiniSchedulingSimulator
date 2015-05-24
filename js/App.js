@@ -26,8 +26,12 @@ var App={
 		createJob:function(){
 			var job={
 				progress:0,
-				gotIOInteration:false
+				gotIOInteration:false,
+				bg:[]
 			};
+
+			for(var len=3;len--;)
+				job.bg.push(Math.floor(96*Math.random()));
 
 			if(Math.random()<=this.probabilityIOBound){
 				job.type='io-bound';
@@ -143,7 +147,9 @@ var App={
 	},
 
 	init:function(){
-		this.component=React.createElement(AppComponent, this);
+		this.component=React.createElement(AppComponent, {
+			App:this
+		});
 
 		this.startExecutionInterval();
 	}

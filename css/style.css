@@ -61,3 +61,15 @@ h1{
 	border-color: #FFD721;
 	border-bottom-right-radius: 5px;
 }
+
+.task_list{
+	list-style: none;
+	overflow: hidden;
+}
+.task_list li{
+	margin: 5px;
+	width: 10px;
+	height: 10px;
+	float: left;
+	border-radius: 5px;
+}
