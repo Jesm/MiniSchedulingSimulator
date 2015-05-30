@@ -31,6 +31,8 @@ var TaskGeneratorComponent=React.createClass({
 
 	render:function(){
 		return React.createElement('div', {id:'task_generator', className:'block1'}, [
+			React.createElement('h2', null, 'Gerador de Processos'),
+
 			LabeledInputFactory({
 				label:'Duração máxima do processo (em quantums)',
 				name:'task_duration',
@@ -61,6 +63,8 @@ var TaskQueueComponent=React.createClass({
 
 	render:function(){
 		return React.createElement('div', {id:'task_queue', className:'block1'}, [
+			React.createElement('h2', null, 'Fila de Processos'),
+
 			TaskListFactory({
 				tasks:this.props.ReadyJobQueue.queue
 			})
@@ -75,7 +79,9 @@ var CpuComponent=React.createClass({
 		if(this.props.Cpu.currentJob)
 			tasks.push(this.props.Cpu.currentJob);
 		
-		return React.createElement('div', {id:'cpu', className:'block1 block2'}, [			
+		return React.createElement('div', {id:'cpu', className:'block1 block2'}, [	
+			React.createElement('h2', null, 'Cpu'),
+
 			LabeledInputFactory({
 				label:'Duração do quantum (em segundos)',
 				name:'quantum_duration',
@@ -95,6 +101,8 @@ var IOQueueComponent=React.createClass({
 
 	render:function(){
 		return React.createElement('div', {id:'io_queue', className:'block1'}, [
+			React.createElement('h2', null, 'Fila de Espera E/S'),
+
 			TaskListFactory({
 				tasks:this.props.WaitingJobQueue.queue
 			})

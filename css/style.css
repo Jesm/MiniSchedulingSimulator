@@ -50,6 +50,19 @@ h1{
 	height: 354px;
 }
 
+.block1 h2{
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	padding: 10px;
+	font-size:32px;
+	font-weight: normal;
+	font-variant: small-caps;
+	font-style: italic;
+	color: #FFF;
+	color: rgba(255, 255, 255, .7);
+}
+
 #task_generator{
 	background: #009B58;
 	border-color: #21BC79;
@@ -66,11 +79,18 @@ h1{
 	border-color: #F8644E;
 	border-top-right-radius: 5px;
 }
+#cpu h2{
+	font-size: 48px;
+}
 
 #io_queue{
 	background: #FFB600;
 	border-color: #FFD721;
 	border-bottom-right-radius: 5px;
+}
+#io_queue h2{
+	left: 0;
+	right: auto;
 }
 
 .task_list{
@@ -94,6 +114,7 @@ h1{
 	border-radius: 36px;
 	text-align: center;
 	font-size: 10px;
+	/*cursor: pointer;*/
 }
 
 .block1 label{
