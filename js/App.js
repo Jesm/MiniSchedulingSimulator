@@ -1,20 +1,21 @@
 var App={
 
 	intervalRef:null,
-	changedIntervalDuration:false,
 
 	cfg:{
 		quantumTimeInterval:.2,
+		changedIntervalDuration:false,
 
 		jobMaxQuantumTime:6,
 		maxJobsPerMinute:120,
+
+		probabilityIOBound:.33 // Multiply by 100 to get the percentage
 	},
 
 	JobGenerator:{
 
 		numberOfCreatedJobs:0,
 		lastJobCreatedTime:+new Date(),
-		probabilityIOBound:.33, // Multiply by 100 to get the percentage
 
 		execute:function(){
 			var jobCreationAvg=60000/App.cfg.maxJobsPerMinute, now=+new Date();
@@ -35,7 +36,7 @@ var App={
 			for(var len=3;len--;)
 				job.bg.push(Math.floor(96*Math.random()));
 
-			if(Math.random()<=this.probabilityIOBound){
+			if(Math.random()<=App.cfg.probabilityIOBound){
 				job.type='io-bound';
 				job.duration=1;
 			}
@@ -141,11 +142,36 @@ var App={
 
 		React.render(this.component, document.body);
 
-		if(this.changedIntervalDuration){
-			this.changedIntervalDuration=false;
+		if(this.cfg.changedIntervalDuration){
+			this.cfg.changedIntervalDuration=false;
 			clearInterval(this.intervalRef);
 			this.startExecutionInterval();
 		}
+	},
+
+	sendEvent:function(name, value){
+
+		switch(name){
+			case 'quantum_duration':
+				if(!isNaN(value)){
+					this.cfg.quantumTimeInterval=+value;
+					this.cfg.changedIntervalDuration=true;
+				}
+			break;
+			case 'task_duration':
+				if(!isNaN(value))
+					this.cfg.jobMaxQuantumTime=+value;
+			break;
+			case 'num_tasks_minute':
+				if(!isNaN(value))
+					this.cfg.maxJobsPerMinute=+value;
+			break;
+			case 'probability_io_bound':
+				if(!isNaN(value))
+					this.cfg.probabilityIOBound=(+value)/100;
+			break;
+		}
+
 	},
 
 	init:function(){

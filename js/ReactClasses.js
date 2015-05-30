@@ -1,21 +1,21 @@
 var AppComponent=React.createClass({
 
-	// getInitialState: function() {
-	// 	return {};
-	// },
-
 	render:function(){
 
 		return React.createElement('main', null, [
 			React.createElement('h1', null, 'Mini Scheduling Simulator'),
+			React.createElement('div', {id:'top_message'}, 'Para uma melhor experiência, atualize seu navegador para a última versão disponível.'),
 			React.createElement('div', {className:'column left'}, [
-				React.createElement(TaskGeneratorComponent),
+				React.createElement(TaskGeneratorComponent, {
+					App:this.props.App
+				}),
 				React.createElement(TaskQueueComponent, {
 					ReadyJobQueue:this.props.App.ReadyJobQueue
 				})
 			]),
 			React.createElement('div', {className:'column right'}, [
 				React.createElement(CpuComponent, {
+					App:this.props.App,
 					Cpu:this.props.App.Cpu
 				}),
 				React.createElement(IOQueueComponent, {
@@ -30,7 +30,30 @@ var AppComponent=React.createClass({
 var TaskGeneratorComponent=React.createClass({
 
 	render:function(){
-		return React.createElement('div', {id:'task_generator', className:'block1'});
+		return React.createElement('div', {id:'task_generator', className:'block1'}, [
+			LabeledInputFactory({
+				label:'Duração máxima do processo (em quantums)',
+				name:'task_duration',
+				type:'number',
+				value:this.props.App.cfg.jobMaxQuantumTime,
+				min:1
+			}),
+			LabeledInputFactory({
+				label:'Quantidade máxima de processos/minuto',
+				name:'num_tasks_minute',
+				type:'number',
+				value:this.props.App.cfg.maxJobsPerMinute,
+				min:1
+			}),
+			LabeledInputFactory({
+				label:'Probabilidade de gerar processo I/O-bound (em %)',
+				name:'probability_io_bound',
+				type:'number',
+				value:(this.props.App.cfg.probabilityIOBound*100).toFixed(0),
+				min:0,
+				max:100
+			})
+		]);
 	}
 });
 
@@ -52,7 +75,15 @@ var CpuComponent=React.createClass({
 		if(this.props.Cpu.currentJob)
 			tasks.push(this.props.Cpu.currentJob);
 		
-		return React.createElement('div', {id:'cpu', className:'block2'}, [
+		return React.createElement('div', {id:'cpu', className:'block1 block2'}, [			
+			LabeledInputFactory({
+				label:'Duração do quantum (em segundos)',
+				name:'quantum_duration',
+				type:'number',
+				value:this.props.App.cfg.quantumTimeInterval,
+				min:0,
+				step:.1
+			}),
 			TaskListFactory({
 				tasks:tasks
 			})
@@ -89,4 +120,39 @@ var TaskList=React.createClass({
 	}
 });
 
+var LabeledInput=React.createClass({
+
+	getInitialState:function(){
+		return {
+			value:this.props.value
+		}
+	},
+
+	handleChange:function(ev){
+		var v=ev.target.value;
+		App.sendEvent(this.props.name, v);
+		this.setState({
+			value:v
+		});
+	},
+
+	render:function(){
+		var inputProps={
+			value:this.state.value,
+			onChange:this.handleChange
+		};
+		for(var strs=['type', 'min', 'max', 'name', 'step'], len=strs.length;len--;){
+			var str=strs[len];
+			if(this.props[str]!=null)
+				inputProps[str]=this.props[str];
+		}
+
+		return React.createElement('label', null, [
+			React.createElement('span', null, this.props.label),
+			React.createElement('input', inputProps),
+		]);
+	}
+});
+
 var TaskListFactory=React.createFactory(TaskList);
+var LabeledInputFactory=React.createFactory(LabeledInput);
