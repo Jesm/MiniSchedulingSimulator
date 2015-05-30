@@ -6,59 +6,65 @@ var App={
 		quantumTimeInterval:.8,
 		changedIntervalDuration:false,
 
-		jobMaxQuantumTime:6,
-		maxJobsPerMinute:120,
+		taskMaxQuantumTime:5,
+		maxTasksPerMinute:35,
 
 		probabilityIOBound:.33 // Multiply by 100 to get the percentage
 	},
 
-	JobGenerator:{
+	TaskGenerator:{
 
-		numberOfCreatedJobs:0,
-		lastJobCreatedTime:+new Date(),
+		numberOfCreatedTasks:0,
+		lastTaskCreatedTime:+new Date(),
+
+		currentTask:null,
 
 		execute:function(){
-			var jobCreationAvg=60000/App.cfg.maxJobsPerMinute, now=+new Date();
-			if(now-this.lastJobCreatedTime>jobCreationAvg){
-				this.createJob();
-				this.lastJobCreatedTime=now;
+			var taskCreationAvg=60000/App.cfg.maxTasksPerMinute, now=+new Date();
+			if(now-this.lastTaskCreatedTime>taskCreationAvg){
+				this.createTask();
+				this.lastTaskCreatedTime=now;
 			}
 		},
 
-		createJob:function(){
-			var job={
+		createTask:function(){
+			var task={
+				state:'created',
 				progress:0,
 				gotIOInteration:false,
 				bg:[],
-				id:(++this.numberOfCreatedJobs)
+				id:(++this.numberOfCreatedTasks)
 			};
 
 			for(var len=3;len--;)
-				job.bg.push(Math.floor(96*Math.random()));
+				task.bg.push(Math.floor(96*Math.random()));
 
 			if(Math.random()<=App.cfg.probabilityIOBound){
-				job.type='io-bound';
-				job.duration=1;
+				task.type='io-bound';
+				task.duration=2;
 			}
 			else{
-				job.type='cpu-bound';
-				job.duration=Math.floor(Math.random()*App.cfg.jobMaxQuantumTime)+1;
+				task.type='cpu-bound';
+				task.duration=Math.floor(Math.random()*App.cfg.taskMaxQuantumTime)+1;
 			}
 
-			App.ReadyJobQueue.add(job);
+			if(this.currentTask)
+				App.ReadyTaskQueue.add(this.currentTask);
+			this.currentTask=task;
 		}
 
 	},
 
-	ReadyJobQueue:{
+	ReadyTaskQueue:{
 
 		queue:[],
 
 		add:function(t){
+			t.state='ready';
 			this.queue.push(t);
 		},
 
-		getJob:function(){
+		getTask:function(){
 			return this.queue.length?this.queue.shift():null;
 		}
 
@@ -66,34 +72,36 @@ var App={
 
 	Cpu:{
 
-		currentJob:null,
+		currentTask:null,
 
 		execute:function(){
-			if(!this.currentJob)
-				this.currentJob=App.ReadyJobQueue.getJob();
-			if(this.currentJob)
-				this.processCurrentJob();
+			if(this.currentTask)
+				this.processCurrentTask();
+			if(!this.currentTask&&(this.currentTask=App.ReadyTaskQueue.getTask()))
+				this.currentTask.state='executing';
 		},
 
-		processCurrentJob:function(){
-			if(this.currentJob.type=='io-bound'&&!this.currentJob.gotIOInteration){
-				App.WaitingJobQueue.add(this.currentJob);
-				this.currentJob=null;
+		processCurrentTask:function(){
+			if(this.currentTask.type=='io-bound'&&!this.currentTask.gotIOInteration){
+				App.WaitingTaskQueue.add(this.currentTask);
+				this.currentTask=null;
 				return;
 			}
 
-			this.currentJob.progress++;
+			this.currentTask.progress++;
 
-			if(this.currentJob.progress==this.currentJob.duration){
-				// Deve fazer algo com o job antes de remove-lo?
-				this.currentJob=null;
-			}
+			if(this.currentTask.progress==this.currentTask.duration)
+				this.currentTask.state='closed';
+			else
+				App.ReadyTaskQueue.add(this.currentTask);
+
+			this.currentTask=null;
 		}
 
 
 	},
 
-	WaitingJobQueue:{
+	WaitingTaskQueue:{
 
 		minWaitingQuantumTime:3,
 		maxWaitingQuantumTime:6,
@@ -104,6 +112,7 @@ var App={
 		currWaitingQuantumTimeExecuted:0,
 
 		add:function(t){
+			t.state='waiting';
 			this.queue.push(t);
 		},
 
@@ -121,9 +130,9 @@ var App={
 			if(this.currWaitingQuantumTimeExecuted==this.currWaitingQuantumTime){
 				this.currWaitingQuantumTimeExecuted=0;
 
-				var job=this.queue.shift();
-				job.gotIOInteration=true;
-				App.ReadyJobQueue.add(job);
+				var task=this.queue.shift();
+				task.gotIOInteration=true;
+				App.ReadyTaskQueue.add(task);
 			}
 		}
 
@@ -136,9 +145,9 @@ var App={
 	},
 
 	execute:function(){
-		this.JobGenerator.execute();
+		this.WaitingTaskQueue.execute();
 		this.Cpu.execute();
-		this.WaitingJobQueue.execute();
+		this.TaskGenerator.execute();
 
 		React.render(this.component, document.body);
 
@@ -160,11 +169,11 @@ var App={
 			break;
 			case 'task_duration':
 				if(!isNaN(value))
-					this.cfg.jobMaxQuantumTime=+value;
+					this.cfg.taskMaxQuantumTime=+value;
 			break;
 			case 'num_tasks_minute':
 				if(!isNaN(value))
-					this.cfg.maxJobsPerMinute=+value;
+					this.cfg.maxTasksPerMinute=+value;
 			break;
 			case 'probability_io_bound':
 				if(!isNaN(value))
@@ -179,6 +188,7 @@ var App={
 			App:this
 		});
 
+		this.execute();
 		this.startExecutionInterval();
 	}
 

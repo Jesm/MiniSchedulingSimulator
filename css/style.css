@@ -99,7 +99,7 @@ h1{
 	height: 100%;
 	overflow: auto;
 }
-#cpu .task_list{
+#task_generator .task_list, #cpu .task_list{
 	position: absolute;
 	bottom: 10px;
 	height: 46px;
