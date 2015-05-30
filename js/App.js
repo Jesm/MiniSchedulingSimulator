@@ -3,7 +3,7 @@ var App={
 	intervalRef:null,
 
 	cfg:{
-		quantumTimeInterval:.2,
+		quantumTimeInterval:.8,
 		changedIntervalDuration:false,
 
 		jobMaxQuantumTime:6,
