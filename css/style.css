@@ -74,6 +74,12 @@ h1{
 	border-color: #388EFF;
 }
 
+#task_info{
+	background: #E36300;
+	border-color: #DB8A4B;
+	border-bottom-left-radius: 5px;
+}
+
 #cpu{
 	background: #D7432D;
 	border-color: #F8644E;

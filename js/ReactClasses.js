@@ -11,6 +11,9 @@ var AppComponent=React.createClass({
 				}),
 				React.createElement(TaskQueueComponent, {
 					ReadyTaskQueue:this.props.App.ReadyTaskQueue
+				}),
+				React.createElement(TaskInfoComponent, {
+					App:this.props.App
 				})
 			]),
 			React.createElement('div', {className:'column right'}, [
@@ -167,6 +170,37 @@ var LabeledInput=React.createClass({
 			React.createElement('span', null, this.props.label),
 			React.createElement('input', inputProps),
 		]);
+	}
+});
+
+var TaskInfoComponent=React.createClass({
+
+	statesLabels:{
+		created:'Novo',
+		ready:'Pronto',
+		executing:'Em execução',
+		waiting:'Em espera',
+		closed:'Finalizado'
+	},
+
+	render:function(){
+		var content=[
+			React.createElement('h2', null, 'Informações do Processo')
+		];
+		if(this.props.App.selectedTask){
+			var task=this.props.App.selectedTask;
+			content=content.concat([
+				React.createElement('h3', null, 'Processo #'+task.id),
+				React.createElement('p', null, [
+					'Estado: ',
+					React.createElement('strong', null, this.statesLabels[task.state])
+				]),
+			]);
+		}
+		else
+			content.push(React.createElement('p', null, 'Nenhum processo selecionado!'));
+
+		return React.createElement('div', {id:'task_info', className:'block1'}, content);
 	}
 });
 
