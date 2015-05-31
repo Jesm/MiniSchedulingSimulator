@@ -161,7 +161,7 @@ var App={
 	},
 
 	render:function(){
-		React.render(this.component, document.body);
+		React.render(this.component, this.rootElement);
 	},
 
 	sendEvent:function(name, value){
@@ -193,6 +193,7 @@ var App={
 		this.component=React.createElement(AppComponent, {
 			App:this
 		});
+		this.rootElement=document.getElementById('table-cell');
 
 		this.execute();
 		this.startExecutionInterval();
