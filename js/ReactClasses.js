@@ -126,16 +126,27 @@ var TaskList=React.createClass({
 	render:function(){
 		var list=[];
 		for(var tasks=this.props.tasks, x=0;x<tasks.length;x++){
-			var task=tasks[x];
-
-			list.push(React.createElement('li', {
-				style:{
-					background:'rgb('+task.bg.join(',')+')'
-				}
-			}, '#'+task.id));
+			list.push(TaskFactory({
+				task:tasks[x]
+			}));
 		}
 
 		return React.createElement('ul', {className:'task_list'}, list);
+	}
+});
+
+var Task=React.createClass({
+
+	select:function(){
+		App.setSelectedTask(this.props.task);
+	},
+
+	render:function(){
+		var t=this.props.task;
+
+		return React.createElement('li', {onClick:this.select, style:{
+			background:'rgb('+t.bg.join(',')+')'
+		}}, '#'+t.id);
 	}
 });
 
@@ -175,6 +186,11 @@ var LabeledInput=React.createClass({
 
 var TaskInfoComponent=React.createClass({
 
+	typeLabels:{
+		'cpu-bound':'CPU-bound',
+		'io-bound':'I/O-bound'
+	},
+
 	statesLabels:{
 		created:'Novo',
 		ready:'Pronto',
@@ -183,18 +199,31 @@ var TaskInfoComponent=React.createClass({
 		closed:'Finalizado'
 	},
 
+	clearSelectedTask:function(){
+		App.setSelectedTask();
+	},
+
 	render:function(){
 		var content=[
 			React.createElement('h2', null, 'Informações do Processo')
 		];
 		if(this.props.App.selectedTask){
-			var task=this.props.App.selectedTask;
+			var task=this.props.App.selectedTask,
+			dur=task.duration,
+			prog=(task.progress/dur*100).toFixed(0);
+
 			content=content.concat([
 				React.createElement('h3', null, 'Processo #'+task.id),
-				React.createElement('p', null, [
-					'Estado: ',
-					React.createElement('strong', null, this.statesLabels[task.state])
-				]),
+				React.createElement('p', null, ['Tipo: ', React.createElement('strong', null, this.typeLabels[task.type])]),
+				React.createElement('p', null, ['Estado: ', React.createElement('strong', null, this.statesLabels[task.state])]),
+				React.createElement('p', null, dur+' quantum'+(dur>1?'s':'')+' de duração'),
+				React.createElement('p', null, prog+'% concluído'),
+
+				React.createElement('button', {
+					className:'close',
+					title:'Limpar seleção',
+					onClick:this.clearSelectedTask
+				}, 'X')
 			]);
 		}
 		else
@@ -205,4 +234,5 @@ var TaskInfoComponent=React.createClass({
 });
 
 var TaskListFactory=React.createFactory(TaskList);
+var TaskFactory=React.createFactory(Task);
 var LabeledInputFactory=React.createFactory(LabeledInput);

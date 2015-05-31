@@ -1,6 +1,7 @@
 var App={
 
 	intervalRef:null,
+	selectedTask:null,
 
 	cfg:{
 		quantumTimeInterval:.8,
@@ -82,15 +83,11 @@ var App={
 		},
 
 		processCurrentTask:function(){
-			if(this.currentTask.type=='io-bound'&&!this.currentTask.gotIOInteration){
-				App.WaitingTaskQueue.add(this.currentTask);
-				this.currentTask=null;
-				return;
-			}
-
 			this.currentTask.progress++;
 
-			if(this.currentTask.progress==this.currentTask.duration)
+			if(this.currentTask.type=='io-bound'&&!this.currentTask.gotIOInteration)
+				App.WaitingTaskQueue.add(this.currentTask);
+			else if(this.currentTask.progress==this.currentTask.duration)
 				this.currentTask.state='closed';
 			else
 				App.ReadyTaskQueue.add(this.currentTask);
@@ -138,6 +135,11 @@ var App={
 
 	},
 
+	setSelectedTask:function(task){
+		this.selectedTask=task;
+		this.render();
+	},
+
 	startExecutionInterval:function(){
 		this.intervalRef=setInterval(function(){
 			App.execute();
@@ -149,13 +151,17 @@ var App={
 		this.Cpu.execute();
 		this.TaskGenerator.execute();
 
-		React.render(this.component, document.body);
+		this.render();
 
 		if(this.cfg.changedIntervalDuration){
 			this.cfg.changedIntervalDuration=false;
 			clearInterval(this.intervalRef);
 			this.startExecutionInterval();
 		}
+	},
+
+	render:function(){
+		React.render(this.component, document.body);
 	},
 
 	sendEvent:function(name, value){
